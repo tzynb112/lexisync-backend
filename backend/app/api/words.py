@@ -777,3 +777,22 @@ async def delete_word(
 
     await db.delete(word)
     await db.commit()
+
+
+@router.post("/admin/clear-all", response_model=dict)
+async def admin_clear_all(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    from app.models.tag import WordTag, FavoriteWord, WordNote
+    from app.models.review import ReviewLog, WordRecord
+
+    await db.execute(delete(WordCategoryLink))
+    await db.execute(delete(WordTag))
+    await db.execute(delete(FavoriteWord))
+    await db.execute(delete(WordNote))
+    await db.execute(delete(ReviewLog))
+    await db.execute(delete(WordRecord))
+    await db.execute(delete(Word))
+    await db.commit()
+    return {"message": "All words and related data cleared"}
