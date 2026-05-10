@@ -8,7 +8,6 @@ import {
   LogOut,
   Atom,
   Menu,
-  X,
   Activity,
   Settings,
   AlertTriangle,
@@ -18,7 +17,6 @@ import {
   Trophy,
   Layers,
   FolderOpen,
-  ChevronDown,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -45,21 +43,28 @@ const navItems = [
   { href: '/settings', label: '设置', icon: Settings },
 ]
 
-function GroupSelectorInHeader() {
+function GroupSelectorInHeader({ className = '' }: { className?: string }) {
   const { selectedGroupId, setSelectedGroupId, groups } = useGroup()
 
   const categories = groups.filter((g) => g.type === 'category')
+  const customTags = groups.filter(
+    (g) =>
+      g.type === 'tag'
+      && !g.is_system
+      && !g.name.toLowerCase().includes('all words')
+      && !g.name.includes('全部'),
+  )
   const tags = groups.filter((g) => g.type === 'tag' && g.name !== '全部词汇')
 
   return (
     <select
       value={selectedGroupId}
       onChange={(e) => setSelectedGroupId(e.target.value)}
-      className="bg-surface-800/60 border border-surface-700/40 rounded-lg px-3 py-2 text-xs font-mono
+      className={`bg-surface-800/60 border border-surface-700/40 rounded-lg px-3 py-2 text-xs font-mono
                  text-surface-300 focus:outline-none focus:border-accent-primary/50 transition-colors
                  min-w-[140px] cursor-pointer appearance-none bg-no-repeat
                  bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23888%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22/%3E%3C/svg%3E')]
-                 bg-[length:16px] bg-[right_8px_center] pr-8"
+                 bg-[length:16px] bg-[right_8px_center] pr-8 ${className}`}
     >
       <option value="">全部词汇</option>
       {categories.length > 0 && (
@@ -71,9 +76,9 @@ function GroupSelectorInHeader() {
           ))}
         </optgroup>
       )}
-      {tags.length > 0 && (
+      {customTags.length > 0 && (
         <optgroup label="我的标签">
-          {tags.map((g) => (
+          {customTags.map((g) => (
             <option key={g.id} value={g.id}>
               {g.name} ({g.word_count}词)
             </option>
@@ -229,18 +234,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-surface-700/40 bg-surface-900/50 backdrop-blur-md">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg text-surface-300 hover:text-surface-100 hover:bg-surface-700/40"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-2">
-            <Atom className="w-5 h-5 text-accent-primary" />
-            <span className="text-sm font-bold text-surface-100 tracking-tight">TZYNB</span>
+        <header className="lg:hidden flex flex-col gap-3 px-4 py-3 border-b border-surface-700/40 bg-surface-900/50 backdrop-blur-md">
+          <div className="flex items-center justify-between w-full">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 rounded-lg text-surface-300 hover:text-surface-100 hover:bg-surface-700/40"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2">
+              <Atom className="w-5 h-5 text-accent-primary" />
+              <span className="text-sm font-bold text-surface-100 tracking-tight">TZYNB</span>
+            </div>
+            <div className="w-9" />
           </div>
-          <div className="w-9" />
+          <GroupSelectorInHeader className="w-full min-w-0 text-sm" />
         </header>
 
         <div className="hidden lg:flex items-center justify-between px-6 py-3 border-b border-surface-700/40 bg-surface-900/50 backdrop-blur-md">
@@ -255,7 +263,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/20 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}

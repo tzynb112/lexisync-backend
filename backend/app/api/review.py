@@ -887,11 +887,13 @@ async def get_dashboard_stats(
 @router.get("/detailed-stats", response_model=DetailedStats)
 async def get_detailed_stats(
     days: int = Query(14, ge=7, le=90),
+    category_id: str | None = Query(None),
     tag_id: str | None = Query(None, description="按标签筛选词汇组"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     now = datetime.now()
+    is_category = bool(category_id)
 
     def tag_join_rl():
         return (
@@ -907,7 +909,40 @@ async def get_detailed_stats(
         day_start = day.replace(hour=0, minute=0, second=0, microsecond=0)
         day_end = day_start + timedelta(days=1)
 
-        if tag_id:
+        if is_category:
+            total = (
+                await db.execute(
+                    select(func.count(ReviewLog.id))
+                    .join(WordRecord, ReviewLog.word_record_id == WordRecord.id)
+                    .join(Word, WordRecord.word_id == Word.id)
+                    .join(WordCategoryLink, and_(WordCategoryLink.word_id == Word.id, WordCategoryLink.category_id == category_id))
+                    .where(
+                        and_(
+                            ReviewLog.user_id == current_user.id,
+                            ReviewLog.reviewed_at >= day_start,
+                            ReviewLog.reviewed_at < day_end,
+                        )
+                    )
+                )
+            ).scalar()
+
+            correct = (
+                await db.execute(
+                    select(func.count(ReviewLog.id))
+                    .join(WordRecord, ReviewLog.word_record_id == WordRecord.id)
+                    .join(Word, WordRecord.word_id == Word.id)
+                    .join(WordCategoryLink, and_(WordCategoryLink.word_id == Word.id, WordCategoryLink.category_id == category_id))
+                    .where(
+                        and_(
+                            ReviewLog.user_id == current_user.id,
+                            ReviewLog.reviewed_at >= day_start,
+                            ReviewLog.reviewed_at < day_end,
+                            ReviewLog.quality >= 3,
+                        )
+                    )
+                )
+            ).scalar()
+        elif tag_id:
             total = (
                 await db.execute(
                     select(func.count(ReviewLog.id))
@@ -982,6 +1017,13 @@ async def get_detailed_stats(
         )
 
     def make_query(conditions):
+        if is_category:
+            return (
+                select(func.count(WordRecord.id))
+                .join(Word, WordRecord.word_id == Word.id)
+                .join(WordCategoryLink, and_(WordCategoryLink.word_id == Word.id, WordCategoryLink.category_id == category_id))
+                .where(and_(WordRecord.user_id == current_user.id, *conditions))
+            )
         if tag_id:
             return (
                 select(func.count(WordRecord.id))
@@ -1013,7 +1055,22 @@ async def get_detailed_stats(
     settings = settings_result.scalar_one_or_none()
     daily_goal = settings.daily_goal if settings else 20
 
-    if tag_id:
+    if is_category:
+        today_reviews = (
+            await db.execute(
+                select(func.count(ReviewLog.id))
+                .join(WordRecord, ReviewLog.word_record_id == WordRecord.id)
+                .join(Word, WordRecord.word_id == Word.id)
+                .join(WordCategoryLink, and_(WordCategoryLink.word_id == Word.id, WordCategoryLink.category_id == category_id))
+                .where(
+                    and_(
+                        ReviewLog.user_id == current_user.id,
+                        ReviewLog.reviewed_at >= now.replace(hour=0, minute=0, second=0, microsecond=0),
+                    )
+                )
+            )
+        ).scalar()
+    elif tag_id:
         today_reviews = (
             await db.execute(
                 select(func.count(ReviewLog.id))
@@ -1046,11 +1103,22 @@ async def get_detailed_stats(
         "percentage": round(min((today_reviews or 0) / daily_goal * 100, 100), 1),
     }
 
-    recent_result = await db.execute(
+    recent_query = (
         select(ReviewLog, WordRecord, Word)
         .join(WordRecord, ReviewLog.word_record_id == WordRecord.id)
         .join(Word, WordRecord.word_id == Word.id)
         .where(ReviewLog.user_id == current_user.id)
+    )
+    if is_category:
+        recent_query = recent_query.join(
+            WordCategoryLink,
+            and_(WordCategoryLink.word_id == Word.id, WordCategoryLink.category_id == category_id),
+        )
+    elif tag_id:
+        recent_query = recent_query.join(WordTag, and_(*tag_join_rl()))
+
+    recent_result = await db.execute(
+        recent_query
         .order_by(ReviewLog.reviewed_at.desc())
         .limit(10)
     )

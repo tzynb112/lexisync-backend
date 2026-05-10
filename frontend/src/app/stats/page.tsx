@@ -24,15 +24,20 @@ function StatsPageInner() {
   const [stats, setStats] = useState<DetailedStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [days, setDays] = useState(14)
-  const { selectedGroupId, setSelectedGroupId, groups } = useGroup()
+  const { selectedGroupId, setSelectedGroupId, groups, selectedGroupType } = useGroup()
 
   useEffect(() => {
     setLoading(true)
-    api.review.detailedStats(days, selectedGroupId || undefined)
+    const isCategory = selectedGroupType === 'category'
+    api.review.detailedStats(
+      days,
+      isCategory ? undefined : (selectedGroupId || undefined),
+      isCategory ? selectedGroupId : undefined,
+    )
       .then((data) => setStats(data as DetailedStats))
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [days, selectedGroupId])
+  }, [days, selectedGroupId, selectedGroupType])
 
   if (loading) {
     return (

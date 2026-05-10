@@ -112,18 +112,20 @@ function DashboardPage() {
   const [recommendations, setRecommendations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const { selectedGroupId, setSelectedGroupId, groups } = useGroup()
+  const { selectedGroupId, setSelectedGroupId, groups, selectedGroupType } = useGroup()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const groupParam = selectedGroupId || undefined
+        const isCategory = selectedGroupType === 'category'
+        const tagParam = isCategory ? undefined : (selectedGroupId || undefined)
+        const categoryParam = isCategory ? selectedGroupId : undefined
         const [statsData, detailedData, achievementsData, wodData, recData] = await Promise.all([
-          api.review.stats(groupParam) as Promise<DashboardStats>,
-          api.review.detailedStats(14, groupParam) as Promise<DetailedStats>,
+          api.review.stats(tagParam, categoryParam) as Promise<DashboardStats>,
+          api.review.detailedStats(14, tagParam, categoryParam) as Promise<DetailedStats>,
           api.achievements.list() as Promise<Achievement[]>,
-          api.words.wordOfTheDay(groupParam) as Promise<any>,
-          api.ai.getRecommendations(5, groupParam) as Promise<any[]>,
+          api.words.wordOfTheDay(tagParam) as Promise<any>,
+          api.ai.getRecommendations(5, tagParam) as Promise<any[]>,
         ])
         setStats(statsData)
         setDetailedStats(detailedData)
@@ -137,7 +139,7 @@ function DashboardPage() {
       }
     }
     fetchData()
-  }, [selectedGroupId])
+  }, [selectedGroupId, selectedGroupType])
 
   if (loading) {
     return (

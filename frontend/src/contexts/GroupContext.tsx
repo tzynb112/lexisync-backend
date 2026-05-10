@@ -14,6 +14,7 @@ export interface VocabularyGroup {
   type: GroupType
   description?: string | null
   icon?: string | null
+  is_system?: boolean
 }
 
 export interface SelectedGroup {
@@ -71,7 +72,6 @@ export function GroupProvider({ children }: { children: ReactNode }) {
         const categories = Array.isArray(categoriesData) ? categoriesData : []
 
         const tagGroups: VocabularyGroup[] = tags
-          .filter((t: any) => !t.is_system)
           .map((t: any) => ({
             id: t.id,
             name: t.name,
@@ -79,6 +79,7 @@ export function GroupProvider({ children }: { children: ReactNode }) {
             word_count: t.word_count || 0,
             created_at: t.created_at,
             type: 'tag' as GroupType,
+            is_system: !!t.is_system,
           }))
 
         const categoryGroups: VocabularyGroup[] = categories.map((c: any) => ({

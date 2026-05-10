@@ -189,7 +189,7 @@ function ModeSelector({
   ]
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto pb-24">
       <div className="text-center mb-10">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
@@ -425,7 +425,7 @@ function FlashcardMode({ tagId, categoryId }: { tagId?: string; categoryId?: str
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-xl font-bold text-surface-100 tracking-tight">闪卡模式</h1>
           <p className="text-surface-400 text-xs mt-0.5 font-mono">{currentIndex + 1} / {words.length} 剩余</p>
@@ -436,7 +436,7 @@ function FlashcardMode({ tagId, categoryId }: { tagId?: string; categoryId?: str
           </div>
       </div>
 
-      <div className="w-full bg-surface-800/50 rounded-full h-1 mb-8 overflow-hidden border border-surface-700/30">
+      <div className="w-full bg-surface-800/50 rounded-full h-1 mb-4 overflow-hidden border border-surface-700/30">
         <div
           className="h-full rounded-full bg-gradient-to-r from-accent-primary/60 to-accent-primary transition-all duration-300 ease-out"
           style={{
@@ -465,8 +465,8 @@ function FlashcardMode({ tagId, categoryId }: { tagId?: string; categoryId?: str
       </div>
 
       {lastFeedback && (
-        <div className="mt-4 card-data rounded-xl p-4 text-center animate-fade-in-up">
-          <p className="text-xs text-surface-400 mb-1 font-mono">
+        <div className="mt-3 card-data rounded-xl p-2.5 text-center animate-fade-in-up">
+          <p className="text-[11px] text-surface-400 mb-1 font-mono">
             下次复习: <span className="text-accent-primary font-semibold">{lastFeedback.interval}</span> 天
             {' · '}难度: <span className="text-accent-secondary font-semibold">{lastFeedback.easiness_factor}</span>
             {' · '}次数: <span className="text-accent-info font-semibold">{lastFeedback.repetitions}</span>
@@ -476,11 +476,12 @@ function FlashcardMode({ tagId, categoryId }: { tagId?: string; categoryId?: str
 
       {/* 手动切换按钮 */}
       {answered && (
-        <div className="flex justify-center gap-3 mt-6 animate-fade-in-up">
+        <div className="flex justify-center mt-4 animate-fade-in-up">
+          <div className="flex justify-center gap-2 flex-wrap">
           <button
             onClick={handlePrev}
             disabled={currentIndex === 0}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium
+            className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium
                        bg-surface-700/40 text-surface-300 border border-surface-600/30
                        hover:bg-surface-600/40 hover:text-surface-200
                        disabled:opacity-30 disabled:cursor-not-allowed
@@ -491,7 +492,7 @@ function FlashcardMode({ tagId, categoryId }: { tagId?: string; categoryId?: str
           </button>
           <button
             onClick={handleNext}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium
+            className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium
                        bg-accent-primary/15 text-accent-primary border border-accent-primary/30
                        hover:bg-accent-primary/25 hover:border-accent-primary/50
                        transition-colors duration-200"
@@ -499,6 +500,7 @@ function FlashcardMode({ tagId, categoryId }: { tagId?: string; categoryId?: str
             {currentIndex < words.length - 1 ? '下一个' : '完成'}
             <ArrowRight className="w-4 h-4" />
           </button>
+          </div>
         </div>
       )}
     </div>

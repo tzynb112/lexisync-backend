@@ -28,14 +28,20 @@ function WrongWordsPage() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const { selectedGroupId } = useGroup()
+  const { selectedGroupId, selectedGroupType } = useGroup()
   const pageSize = 20
 
   const fetchData = useCallback(async (p: number) => {
     setLoading(true)
     setError('')
     try {
-      const data = await api.review.wrongWords(p, pageSize, selectedGroupId || undefined) as WrongWordsResponse
+      const isCategory = selectedGroupType === 'category'
+      const data = await api.review.wrongWords(
+        p,
+        pageSize,
+        isCategory ? undefined : (selectedGroupId || undefined),
+        isCategory ? selectedGroupId : undefined,
+      ) as WrongWordsResponse
       setItems(data.items)
       setTotal(data.total)
     } catch (err: any) {
@@ -43,7 +49,7 @@ function WrongWordsPage() {
     } finally {
       setLoading(false)
     }
-  }, [selectedGroupId])
+  }, [selectedGroupId, selectedGroupType])
 
   useEffect(() => {
     fetchData(page)

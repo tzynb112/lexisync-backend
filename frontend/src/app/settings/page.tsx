@@ -19,6 +19,8 @@ import {
 
 import { AppShell } from '@/components/AppShell'
 import { api } from '@/lib/api'
+import { useTheme } from '@/lib/theme'
+import { useLanguage } from '@/lib/language'
 import type { UserSettings, StudyMode } from '@/types'
 
 export default function SettingsPage() {
@@ -26,6 +28,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const { theme, toggleTheme } = useTheme()
+  const { language, setLanguage } = useLanguage()
 
   useEffect(() => {
     api.tags.getSettings().then((data: any) => {
@@ -189,7 +193,61 @@ export default function SettingsPage() {
                 />
               </button>
             </div>
+          </div>
         </div>
+
+        <div className="card-data rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-6">
+            <Sparkles className="w-5 h-5 text-accent-warning" />
+            <h2 className="section-title">外观与语言</h2>
+          </div>
+          <div className="space-y-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-surface-200">主题模式</p>
+                <p className="text-xs text-surface-500">当前：{theme === 'dark' ? '暗色模式' : '亮色模式'}</p>
+              </div>
+              <button
+                onClick={toggleTheme}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium
+                           bg-surface-700/40 text-surface-300 hover:text-accent-primary hover:bg-accent-primary/10
+                           border border-surface-600/30 hover:border-accent-primary/30 transition-colors"
+              >
+                {theme === 'dark' ? '☀ 亮色' : '🌙 暗色'}
+              </button>
+            </div>
+
+            <div className="border-t border-surface-700/30 pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-surface-200">界面语言</p>
+                  <p className="text-xs text-surface-500">当前：{language === 'zh' ? '中文' : 'English'}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setLanguage('zh')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                      ${language === 'zh'
+                        ? 'bg-accent-primary/20 text-accent-primary border border-accent-primary/30'
+                        : 'bg-surface-700/40 text-surface-400 border border-surface-600/30 hover:text-surface-200'
+                      }`}
+                  >
+                    中文
+                  </button>
+                  <button
+                    onClick={() => setLanguage('en')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                      ${language === 'en'
+                        ? 'bg-accent-primary/20 text-accent-primary border border-accent-primary/30'
+                        : 'bg-surface-700/40 text-surface-400 border border-surface-600/30 hover:text-surface-200'
+                      }`}
+                  >
+                    English
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="card-data rounded-2xl p-6">

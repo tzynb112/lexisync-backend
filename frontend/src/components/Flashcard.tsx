@@ -111,7 +111,7 @@ export function Flashcard({ word, onFeedback, disabled }: FlashcardProps) {
         <motion.div
           className="relative w-full cursor-pointer"
           style={{
-            minHeight: '380px',
+            minHeight: '280px',
             transformStyle: 'preserve-3d',
             willChange: 'transform',
           }}
@@ -124,7 +124,7 @@ export function Flashcard({ word, onFeedback, disabled }: FlashcardProps) {
         >
           {/* ========== 正面 ========== */}
           <div
-            className={`absolute inset-0 card-sci p-8 flex flex-col items-center justify-center rounded-2xl
+            className={`absolute inset-0 card-sci p-5 sm:p-8 flex flex-col items-center justify-center rounded-2xl
                         ${disabled ? 'opacity-60 pointer-events-none' : ''}`}
             style={{
               backfaceVisibility: 'hidden',
@@ -142,16 +142,16 @@ export function Flashcard({ word, onFeedback, disabled }: FlashcardProps) {
               </span>
             </div>
 
-            <div className="flex-1 flex flex-col items-center justify-center gap-5">
+            <div className="flex-1 flex flex-col items-center justify-center gap-3 sm:gap-5">
               <div className="relative">
-                <p className="text-4xl font-bold text-surface-100 tracking-tight">
+                <p className="text-3xl sm:text-4xl font-bold text-surface-100 tracking-tight">
                   {word.word.word}
                 </p>
                 <div className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-primary/30 to-transparent" />
               </div>
 
               {word.word.phonetic && (
-                <p className="text-surface-400 text-base font-mono tracking-wide">
+                <p className="text-surface-400 text-sm sm:text-base font-mono tracking-wide">
                   /{word.word.phonetic}/
                 </p>
               )}
@@ -159,7 +159,7 @@ export function Flashcard({ word, onFeedback, disabled }: FlashcardProps) {
               {/* 发音按钮 */}
               <button
                 onClick={handlePronounce}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg
+                className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg
                            bg-surface-700/40 text-surface-300 hover:text-accent-primary
                            hover:bg-accent-primary/10 border border-surface-600/30
                            hover:border-accent-primary/20
@@ -167,7 +167,7 @@ export function Flashcard({ word, onFeedback, disabled }: FlashcardProps) {
                 title="点击发音"
               >
                 <Volume2 className="w-4 h-4" />
-                <span className="text-sm font-medium">发音</span>
+                <span className="text-xs sm:text-sm font-medium">发音</span>
               </button>
             </div>
 
@@ -179,7 +179,7 @@ export function Flashcard({ word, onFeedback, disabled }: FlashcardProps) {
 
           {/* ========== 背面 ========== */}
           <div
-            className="absolute inset-0 card-sci p-6 flex flex-col rounded-2xl"
+            className="absolute inset-0 card-sci p-4 sm:p-6 flex flex-col rounded-2xl"
             style={{
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
@@ -191,7 +191,7 @@ export function Flashcard({ word, onFeedback, disabled }: FlashcardProps) {
               <span className="text-[9px] font-mono text-accent-secondary/50 tracking-widest uppercase">背面</span>
             </div>
 
-            <div className="flex-1 space-y-4 overflow-y-auto pt-6">
+            <div className="flex-1 space-y-3 sm:space-y-4 overflow-y-auto pt-4 sm:pt-6">
               {/* 单词 + 词性 + 释义 */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -244,7 +244,7 @@ export function Flashcard({ word, onFeedback, disabled }: FlashcardProps) {
       </div>
 
       {/* 评分按钮 */}
-      <div className="flex justify-center gap-3 mt-6">
+      <div className="flex justify-center gap-2 mt-4 sm:mt-6">
         {[
           {
             quality: 1,
@@ -272,7 +272,7 @@ export function Flashcard({ word, onFeedback, disabled }: FlashcardProps) {
             key={btn.quality}
             onClick={() => handleFeedback(btn.quality)}
             disabled={disabled}
-            className={`flex flex-col items-center gap-1 px-6 py-3 rounded-xl text-sm font-medium border
+            className={`flex flex-col items-center gap-1 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-medium border
                        transition-all duration-150 bg-surface-800/50 backdrop-blur-sm
                        disabled:opacity-30 disabled:cursor-not-allowed
                        hover:shadow-lg ${btn.color}`}

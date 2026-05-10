@@ -134,12 +134,12 @@ export function ShareCard({ word, phonetic, definition, partOfSpeech, exampleSen
   }, [generateCard])
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
       <canvas ref={canvasRef} className="hidden" />
       <button
         onClick={handleDownload}
         disabled={generating}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium
+        className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium w-full sm:w-auto
                    bg-surface-700/40 text-surface-300 hover:text-accent-primary hover:bg-accent-primary/10
                    border border-surface-600/30 hover:border-accent-primary/30 transition-colors"
       >
@@ -153,7 +153,7 @@ export function ShareCard({ word, phonetic, definition, partOfSpeech, exampleSen
       <button
         onClick={handleCopy}
         disabled={generating}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium
+        className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium w-full sm:w-auto
                    bg-surface-700/40 text-surface-300 hover:text-accent-secondary hover:bg-accent-secondary/10
                    border border-surface-600/30 hover:border-accent-secondary/30 transition-colors"
       >

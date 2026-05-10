@@ -61,7 +61,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
   const csvInputRef = useRef<HTMLInputElement>(null)
   const jsonInputRef = useRef<HTMLInputElement>(null)
 
-  const { selectedGroupId, setSelectedGroupId, selectedGroupType } = useGroup()
+  const { selectedGroupId, setSelectedGroupId, selectedGroupType, groups } = useGroup()
 
   const [filterPos, setFilterPos] = useState('')
   const [filterTagId, setFilterTagId] = useState(initialTagId || '')
@@ -87,6 +87,19 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
 
   const [newTagName, setNewTagName] = useState('')
   const [newTagColor, setNewTagColor] = useState('#00e5bf')
+
+  const isAllWordsTagName = (name: string) => {
+    const normalized = name.toLowerCase()
+    return normalized.includes('all words') || name.includes('全部词汇')
+  }
+
+  const categoryGroups = groups.filter((g) => g.type === 'category')
+  const systemTagGroups = groups.filter(
+    (g) => g.type === 'tag' && g.is_system && !isAllWordsTagName(g.name),
+  )
+  const visibleGroupTabs = categoryGroups.some((g) => g.word_count > 0)
+    ? categoryGroups
+    : systemTagGroups
 
   useEffect(() => {
     if (selectedGroupType === 'category') {
@@ -394,12 +407,12 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-surface-100 tracking-tight">词汇管理</h1>
           <p className="text-surface-400 text-xs mt-1 font-mono">浏览、搜索和导入词汇</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 sm:justify-end">
           <button
             onClick={handleStartAll}
             className="btn-primary flex items-center gap-2 bg-accent-primary/20 text-accent-primary border-accent-primary/30 hover:bg-accent-primary/30"
@@ -471,6 +484,36 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
           </div>
         </div>
       </div>
+
+      {visibleGroupTabs.length > 0 && (
+        <div className="card-data rounded-xl p-3">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <button
+              onClick={() => setSelectedGroupId('')}
+              className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap border transition-colors ${
+                selectedGroupId === ''
+                  ? 'bg-accent-primary/15 text-accent-primary border-accent-primary/30'
+                  : 'bg-surface-800/40 text-surface-400 border-surface-700/30 hover:text-surface-200'
+              }`}
+            >
+              全部
+            </button>
+            {visibleGroupTabs.map((group) => (
+              <button
+                key={group.id}
+                onClick={() => setSelectedGroupId(group.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap border transition-colors ${
+                  selectedGroupId === group.id
+                    ? 'bg-accent-primary/15 text-accent-primary border-accent-primary/30'
+                    : 'bg-surface-800/40 text-surface-400 border-surface-700/30 hover:text-surface-200'
+                }`}
+              >
+                {group.name} ({group.word_count})
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {successMsg && (
         <div className="flex items-center gap-2 p-3 rounded-lg bg-accent-primary/8 border border-accent-primary/15 text-accent-primary text-sm">
@@ -591,7 +634,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <form onSubmit={handleSearch} className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-500" />
           <input
@@ -613,7 +656,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
         </form>
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`btn-secondary flex items-center gap-1.5 text-xs ${showFilters ? 'bg-accent-primary/10 border-accent-primary/20 text-accent-primary' : ''}`}
+          className={`btn-secondary w-full sm:w-auto justify-center flex items-center gap-1.5 text-xs ${showFilters ? 'bg-accent-primary/10 border-accent-primary/20 text-accent-primary' : ''}`}
         >
           <Filter className="w-3.5 h-3.5" />
           筛选
@@ -621,7 +664,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
         </button>
         <button
           onClick={() => selectMode ? exitSelectMode() : setSelectMode(true)}
-          className={`btn-secondary flex items-center gap-1.5 text-xs ${selectMode ? 'bg-accent-secondary/10 border-accent-secondary/20 text-accent-secondary' : ''}`}
+          className={`btn-secondary w-full sm:w-auto justify-center flex items-center gap-1.5 text-xs ${selectMode ? 'bg-accent-secondary/10 border-accent-secondary/20 text-accent-secondary' : ''}`}
         >
           <CheckSquare className="w-3.5 h-3.5" />
           {selectMode ? '取消选择' : '批量操作'}
@@ -780,7 +823,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
           {words.map((word) => (
             <div
               key={word.id}
-              className={`card-data rounded-xl p-4 flex items-start gap-3
+              className={`card-data rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3
                          hover:border-surface-500/40 transition-colors relative
                          ${selectedIds.has(word.id) ? 'border-accent-secondary/30 bg-accent-secondary/5' : ''}`}
             >
@@ -796,22 +839,22 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
                   )}
                 </button>
               )}
-              <Link href={`/words/detail?id=${word.id}`} className="flex-1 min-w-0 group/link">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-base font-semibold text-surface-100 group-hover/link:text-accent-primary transition-colors">{word.word}</h3>
+              <Link href={`/words/detail?id=${word.id}`} className="flex-1 min-w-0 group/link w-full">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
+                  <h3 className="text-sm sm:text-base font-semibold text-surface-100 group-hover/link:text-accent-primary transition-colors">{word.word}</h3>
                   <SpeakButton text={word.word} size="sm" />
                   {word.phonetic && (
-                    <span className="text-xs text-surface-400 font-mono">/{word.phonetic}/</span>
+                    <span className="text-[11px] sm:text-xs text-surface-400 font-mono">/{word.phonetic}/</span>
                   )}
                   {word.part_of_speech && (
-                    <span className="label-tag bg-accent-secondary/10 text-accent-secondary border border-accent-secondary/20">
+                    <span className="label-tag bg-accent-secondary/10 text-accent-secondary border border-accent-secondary/20 text-[9px] sm:text-[10px] flex-shrink-0">
                       {word.part_of_speech}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-surface-300 line-clamp-2">{word.definition}</p>
+                <p className="text-xs sm:text-sm text-surface-300 line-clamp-2">{word.definition}</p>
               </Link>
-              <div className="flex items-center gap-1.5 shrink-0">
+              <div className="flex items-center justify-end gap-0.5 sm:gap-1.5 shrink-0 w-full sm:w-auto flex-nowrap">
                 <button
                   onClick={() => handleDeleteWord(word.id)}
                   className="p-1.5 rounded-lg text-surface-500 hover:text-accent-error hover:bg-accent-error/5 transition-colors"
@@ -864,7 +907,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
                 </div>
                 <button
                   onClick={() => handleStartLearning(word.id)}
-                  className="btn-primary text-xs px-3 py-1.5 font-mono"
+                  className="btn-primary text-xs px-2.5 sm:px-3 py-1.5 font-mono whitespace-nowrap"
                 >
                   + 学习
                 </button>

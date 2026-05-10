@@ -45,7 +45,7 @@ function LeaderboardPageInner() {
   const [data, setData] = useState<LeaderboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { selectedGroupId } = useGroup()
+  const { selectedGroupId, selectedGroupType } = useGroup()
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -53,7 +53,8 @@ function LeaderboardPageInner() {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 10000)
     try {
-      const result = await api.leaderboard.get(period, sortBy, selectedGroupId || undefined, controller.signal) as LeaderboardData
+      const tagFilter = selectedGroupType === 'tag' ? (selectedGroupId || undefined) : undefined
+      const result = await api.leaderboard.get(period, sortBy, tagFilter, controller.signal) as LeaderboardData
       setData(result)
     } catch (err: unknown) {
       setData(null)
@@ -68,7 +69,7 @@ function LeaderboardPageInner() {
       clearTimeout(timeoutId)
       setLoading(false)
     }
-  }, [period, sortBy, selectedGroupId])
+  }, [period, sortBy, selectedGroupId, selectedGroupType])
 
   useEffect(() => {
     fetchData()

@@ -207,62 +207,68 @@ function WordDetailInner() {
           </div>
         )}
 
-        <div className="card-sci rounded-2xl p-8">
-          <div className="flex items-start justify-between mb-6">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-surface-100">{word.word}</h1>
-                <SpeakButton text={word.word} size="md" />
-                <button
-                  onClick={handleToggleFavorite}
-                  className={`p-2 rounded-lg transition-colors
-                    ${word.is_favorited
-                      ? 'text-accent-error bg-accent-error/10'
-                      : 'text-surface-500 hover:text-accent-error hover:bg-accent-error/5'
-                    }`}
-                >
-                  <Heart className={`w-5 h-5 ${word.is_favorited ? 'fill-current' : ''}`} />
-                </button>
-                <ShareCard
-                  word={word.word}
-                  phonetic={word.phonetic}
-                  definition={word.definition}
-                  partOfSpeech={word.part_of_speech}
-                  exampleSentence={word.example_sentence}
-                />
-              </div>
-              {word.phonetic && (
-                <p className="text-surface-400 text-lg font-mono mb-2">/{word.phonetic}/</p>
-              )}
-              <div className="flex items-center gap-2 flex-wrap">
-                {word.part_of_speech && (
-                  <span className="label-tag bg-accent-secondary/10 text-accent-secondary border border-accent-secondary/20">
-                    {word.part_of_speech}
-                  </span>
-                )}
-                {word.tags.map((tag) => (
-                  <span
-                    key={tag.id}
-                    className="flex items-center gap-1 px-2 py-0.5 rounded text-xs border"
-                    style={{
-                      backgroundColor: `${tag.color}15`,
-                      borderColor: `${tag.color}30`,
-                      color: tag.color,
-                    }}
+        <div className="card-sci rounded-2xl p-4 sm:p-8">
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-surface-100 break-all">{word.word}</h1>
+                  <div className="flex items-center gap-1 shrink-0 flex-nowrap">
+                    <SpeakButton text={word.word} size="md" />
+                    <button
+                      onClick={handleToggleFavorite}
+                      className={`p-2 rounded-lg transition-colors
+                        ${word.is_favorited
+                          ? 'text-accent-error bg-accent-error/10'
+                          : 'text-surface-500 hover:text-accent-error hover:bg-accent-error/5'
+                        }`}
+                    >
+                      <Heart className={`w-5 h-5 ${word.is_favorited ? 'fill-current' : ''}`} />
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                  <ShareCard
+                    word={word.word}
+                    phonetic={word.phonetic}
+                    definition={word.definition}
+                    partOfSpeech={word.part_of_speech}
+                    exampleSentence={word.example_sentence}
+                  />
+                  <button
+                    onClick={handleStartLearning}
+                    className="btn-primary flex items-center justify-center gap-2 text-sm whitespace-nowrap w-full sm:w-auto"
                   >
-                    <div className="w-2 h-2 rounded-sm" style={{ backgroundColor: tag.color }} />
-                    {tag.name}
-                  </span>
-                ))}
+                    <Rocket className="w-4 h-4" />
+                    开始学习
+                  </button>
+                </div>
+                {word.phonetic && (
+                  <p className="text-surface-400 text-base sm:text-lg font-mono mb-2">/{word.phonetic}/</p>
+                )}
+                <div className="flex items-center gap-2 flex-wrap">
+                  {word.part_of_speech && (
+                    <span className="label-tag bg-accent-secondary/10 text-accent-secondary border border-accent-secondary/20">
+                      {word.part_of_speech}
+                    </span>
+                  )}
+                  {word.tags.map((tag) => (
+                    <span
+                      key={tag.id}
+                      className="flex items-center gap-1 px-2 py-0.5 rounded text-xs border"
+                      style={{
+                        backgroundColor: `${tag.color}15`,
+                        borderColor: `${tag.color}30`,
+                        color: tag.color,
+                      }}
+                    >
+                      <div className="w-2 h-2 rounded-sm" style={{ backgroundColor: tag.color }} />
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-            <button
-              onClick={handleStartLearning}
-              className="btn-primary flex items-center gap-2"
-            >
-              <Rocket className="w-4 h-4" />
-              开始学习
-            </button>
           </div>
 
           <div className="p-5 rounded-xl bg-surface-800/40 border border-surface-700/30 mb-6">
@@ -454,7 +460,7 @@ function WordDetailInner() {
                           {parseLocalDate(note.created_at).toLocaleString('zh-CN')}
                         </p>
                       </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                      <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
                         <button
                           onClick={() => {
                             setEditingNoteId(note.id)
