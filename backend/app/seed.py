@@ -2,8 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, text
 
 from app.database import async_session_factory
-from app.models.category import WordCategory
-from app.models.category_link import WordCategoryLink
+from app.models.word import WordCategory
 
 
 CATEGORIES_SEED = [
