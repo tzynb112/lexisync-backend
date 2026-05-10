@@ -17,8 +17,11 @@ from app.database import async_session_factory
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    async with async_session_factory() as session:
-        await seed_categories(session)
+    try:
+        async with async_session_factory() as session:
+            await seed_categories(session)
+    except Exception as e:
+        print(f"⚠️ Seed failed (non-fatal): {e}")
     yield
     await engine.dispose()
 
