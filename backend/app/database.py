@@ -4,7 +4,6 @@ from sqlalchemy import event
 
 from app.config import settings
 
-# 使用配置中的数据库URL，如果没有配置则使用SQLite
 if settings.DATABASE_URL.startswith("sqlite"):
     engine = create_async_engine(
         settings.DATABASE_URL,
@@ -23,6 +22,14 @@ else:
     engine = create_async_engine(
         settings.DATABASE_URL,
         echo=False,
+        pool_size=2,
+        max_overflow=4,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        connect_args={
+            "ssl": "require",
+            "timeout": 30,
+        },
     )
 
 async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
