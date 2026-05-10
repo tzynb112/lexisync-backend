@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment / Secrets
+.env
+.env.local
+.env.production
+
+# Database (local SQLite)
+*.db
+*.db-shm
+*.db-wal
+*_backup.db
+
+# Binary executables
+ffmpeg-bin/
+
+# Build
+.next/
+out/
+dist/
+build/
+*.egg-info/
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Vocabulary data files (only root-level CSVs)
+/backend/*.csv
+/backend/*.txt
+
+# Utility/one-off scripts (keep only source code)
+/backend/check_*.py
+/backend/check_*.js
+/backend/fix_*.py
+/backend/fix_*.js
+/backend/verify_*.py
+/backend/verify_*.js
+/backend/debug_*.js
+/backend/import_*.py
+/backend/import_*.js
+/backend/update_*.js
+/backend/download_*.py
+/backend/extract_*.py
+/backend/count_*.js
+/backend/manage_*.js
+/backend/manage_*.py
+/backend/test_import.js
+/backend/test_api.py
+/backend/test_category_link.py
+/backend/test_leaderboard.py
+/backend/compare_vocab.py
+/backend/migrate_tags_to_categories.py
+/backend/seed_system_tags.py
+/backend/setup_vocabulary_groups.py
+/backend/add_unique_constraints.py
+/backend/keep_kaoyan_only.js
