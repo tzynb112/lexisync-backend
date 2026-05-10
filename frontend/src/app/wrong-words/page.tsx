@@ -119,7 +119,7 @@ function WrongWordsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <Link
-                          href={`/words/${item.word_id}`}
+                          href={`/words/detail?id=${item.word_id}`}
                           className="text-lg font-semibold text-surface-100 hover:text-accent-primary transition-colors font-mono"
                         >
                           {item.word}

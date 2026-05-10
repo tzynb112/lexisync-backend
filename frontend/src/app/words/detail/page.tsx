@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { Suspense, useState, useEffect } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
@@ -32,10 +32,27 @@ import { api } from '@/lib/api'
 import { parseLocalDate } from '@/lib/timeSync'
 import type { WordDetail, WordNote, WordRelation } from '@/types'
 
-function WordDetailPage() {
-  const params = useParams()
+export default function WordDetailPage() {
+  return (
+    <Suspense fallback={
+      <AppShell>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="relative w-10 h-10">
+            <div className="absolute inset-0 rounded-full border-2 border-surface-700" />
+            <div className="absolute inset-0 rounded-full border-2 border-accent-primary border-t-transparent animate-spin" />
+          </div>
+        </div>
+      </AppShell>
+    }>
+      <WordDetailInner />
+    </Suspense>
+  )
+}
+
+function WordDetailInner() {
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const wordId = params.id as string
+  const wordId = searchParams.get('id') || ''
 
   const [word, setWord] = useState<WordDetail | null>(null)
   const [loading, setLoading] = useState(true)
@@ -120,6 +137,20 @@ function WordDetailPage() {
       setError(err.message || '删除笔记失败')
       setTimeout(() => setError(''), 3000)
     }
+  }
+
+  if (!wordId) {
+    return (
+      <AppShell>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <BookOpen className="w-12 h-12 text-surface-600" />
+          <p className="text-surface-400">请选择一个单词</p>
+          <button onClick={() => router.push('/words')} className="btn-secondary">
+            返回词汇列表
+          </button>
+        </div>
+      </AppShell>
+    )
   }
 
   if (loading) {
@@ -460,7 +491,7 @@ function WordDetailPage() {
               {relations.map((rel) => (
                 <Link
                   key={rel.id}
-                  href={`/words/${rel.related_word_id}`}
+                  href={`/words/detail?id=${rel.related_word_id}`}
                   className="flex items-center gap-3 p-3 rounded-lg bg-surface-800/30 border border-surface-700/20
                              hover:border-accent-secondary/30 hover:bg-surface-700/30 transition-colors group"
                 >
@@ -507,8 +538,4 @@ function WordDetailPage() {
       </div>
     </AppShell>
   )
-}
-
-export default function WordDetailRoute() {
-  return <WordDetailPage />
 }

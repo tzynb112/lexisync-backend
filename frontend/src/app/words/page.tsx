@@ -796,7 +796,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
                   )}
                 </button>
               )}
-              <Link href={`/words/${word.id}`} className="flex-1 min-w-0 group/link">
+              <Link href={`/words/detail?id=${word.id}`} className="flex-1 min-w-0 group/link">
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="text-base font-semibold text-surface-100 group-hover/link:text-accent-primary transition-colors">{word.word}</h3>
                   <SpeakButton text={word.word} size="sm" />

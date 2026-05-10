@@ -53,7 +53,7 @@ export function SearchBar() {
       setSelectedIndex((prev) => Math.max(prev - 1, -1))
     } else if (e.key === 'Enter' && selectedIndex >= 0) {
       e.preventDefault()
-      window.location.href = `/words/${results[selectedIndex].id}`
+      window.location.href = `/words/detail?id=${results[selectedIndex].id}`
     } else if (e.key === 'Escape') {
       setOpen(false)
       inputRef.current?.blur()
@@ -120,7 +120,7 @@ export function SearchBar() {
             {results.map((word, i) => (
               <Link
                 key={word.id}
-                href={`/words/${word.id}`}
+                href={`/words/detail?id=${word.id}`}
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 transition-colors group
                   ${i === selectedIndex ? 'bg-accent-primary/10' : 'hover:bg-surface-700/50'}`}

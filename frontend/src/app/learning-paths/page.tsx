@@ -228,7 +228,7 @@ function LearningPathsPage() {
                   {selectedPath.words?.map((pw, i) => (
                     <Link
                       key={pw.id}
-                      href={`/words/${pw.id}`}
+                      href={`/words/detail?id=${pw.id}`}
                       className={`flex items-center gap-3 p-3 rounded-lg transition-colors group
                         ${pw.is_studied
                           ? 'bg-accent-primary/5 hover:bg-accent-primary/10'

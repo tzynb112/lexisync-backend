@@ -306,7 +306,7 @@ function DashboardPage() {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <Link
-                  href={`/words/${wordOfDay.word_id}`}
+                  href={`/words/detail?id=${wordOfDay.word_id}`}
                   className="text-xl font-bold text-surface-100 hover:text-accent-primary transition-colors font-mono"
                 >
                   {wordOfDay.word}
@@ -352,7 +352,7 @@ function DashboardPage() {
             {recommendations.map((rec) => (
               <Link
                 key={rec.id}
-                href={`/words/${rec.id}`}
+                href={`/words/detail?id=${rec.id}`}
                 className="p-3 rounded-xl bg-surface-800/30 border border-surface-700/20
                            hover:border-accent-secondary/30 hover:bg-surface-700/30 transition-colors duration-200 group"
               >

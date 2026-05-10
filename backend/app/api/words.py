@@ -163,6 +163,40 @@ async def add_word_to_category(
     return {"message": "关联成功", "word_id": word_id, "category_id": category_id}
 
 
+class BatchLinkRequest(BaseModel):
+    word_ids: list[str]
+    category_id: str
+
+
+@router.post("/categories/batch-link", response_model=dict)
+async def batch_add_words_to_category(
+    payload: BatchLinkRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    category = (await db.execute(
+        select(WordCategory).where(WordCategory.id == payload.category_id)
+    )).scalar_one_or_none()
+    if not category:
+        raise HTTPException(status_code=404, detail="分类未找到")
+
+    existing_word_ids = {
+        row[0] for row in (await db.execute(
+            select(WordCategoryLink.word_id).where(
+                WordCategoryLink.word_id.in_(payload.word_ids),
+                WordCategoryLink.category_id == payload.category_id,
+            )
+        )).all()
+    }
+
+    new_ids = [wid for wid in payload.word_ids if wid not in existing_word_ids]
+    for wid in new_ids:
+        db.add(WordCategoryLink(word_id=wid, category_id=payload.category_id))
+
+    await db.flush()
+    return {"linked": len(new_ids), "skipped": len(existing_word_ids), "total": len(payload.word_ids)}
+
+
 @router.post("", response_model=WordResponse, status_code=status.HTTP_201_CREATED)
 async def create_word(
     payload: WordCreate,
