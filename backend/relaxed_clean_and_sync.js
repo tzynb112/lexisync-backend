@@ -52,6 +52,8 @@ function isBadNoiseWord(word) {
   if (/^[a-z]{1,2}-[a-z]{1,2}$/.test(w)) return true;
   // Repeated gibberish like aaaa / bbbb.
   if (/^([a-z])\1{3,}$/.test(w)) return true;
+  // Extremely long technical terms are low-value for this learning product.
+  if (w.length > 18) return true;
   return false;
 }
 
