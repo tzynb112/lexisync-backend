@@ -19,30 +19,22 @@ export function useTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'dark'
     const stored = localStorage.getItem('lexisync_theme') as Theme | null
-    if (stored === 'light' || stored === 'dark') {
-      setTheme(stored)
-    }
-    setMounted(true)
-  }, [])
+    if (stored === 'light' || stored === 'dark') return stored
+    return 'dark'
+  })
 
   useEffect(() => {
-    if (!mounted) return
     document.documentElement.setAttribute('data-theme', theme)
+    document.documentElement.style.colorScheme = theme
     localStorage.setItem('lexisync_theme', theme)
-  }, [theme, mounted])
+  }, [theme])
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }, [])
-
-  if (!mounted) {
-    return <>{children}</>
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

@@ -406,23 +406,23 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-surface-100 tracking-tight">词汇管理</h1>
           <p className="text-surface-400 text-xs mt-1 font-mono">浏览、搜索和导入词汇</p>
         </div>
-        <div className="flex flex-wrap gap-2 sm:justify-end">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
           <button
             onClick={handleStartAll}
-            className="btn-primary flex items-center gap-2 bg-accent-primary/20 text-accent-primary border-accent-primary/30 hover:bg-accent-primary/30"
+            className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2 bg-accent-primary/20 text-accent-primary border-accent-primary/30 hover:bg-accent-primary/30"
           >
             <Rocket className="w-4 h-4" />
             全部开始
           </button>
           <button
             onClick={() => csvInputRef.current?.click()}
-            className="btn-secondary flex items-center gap-2"
+            className="btn-secondary w-full sm:w-auto flex items-center justify-center gap-2"
           >
             <FileSpreadsheet className="w-4 h-4" />
             导入CSV
@@ -436,7 +436,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
           />
           <button
             onClick={() => jsonInputRef.current?.click()}
-            className="btn-secondary flex items-center gap-2"
+            className="btn-secondary w-full sm:w-auto flex items-center justify-center gap-2"
           >
             <FileJson className="w-4 h-4" />
             导入JSON
@@ -450,13 +450,13 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
           />
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="btn-primary flex items-center gap-2"
+            className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2"
           >
             <Plus className="w-4 h-4" />
             添加单词
           </button>
           <div className="relative group">
-            <button className="btn-secondary flex items-center gap-2">
+            <button className="btn-secondary w-full sm:w-auto flex items-center justify-center gap-2">
               <Download className="w-4 h-4" />
               导出
               <ChevronDown className="w-3 h-3" />
@@ -486,7 +486,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
       </div>
 
       {visibleGroupTabs.length > 0 && (
-        <div className="card-data rounded-xl p-3">
+        <div className="card-data rounded-xl p-2.5 sm:p-3">
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <button
               onClick={() => setSelectedGroupId('')}
@@ -591,7 +591,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
         </form>
       )}
 
-      <div className="card-data rounded-2xl p-4">
+      <div className="card-data rounded-2xl p-3 sm:p-4">
         <div className="flex items-center gap-2 mb-3">
           <TagIcon className="w-4 h-4 text-accent-secondary" />
           <h3 className="text-sm font-semibold text-surface-200">标签管理</h3>
@@ -614,12 +614,12 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
             </div>
           ))}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <input
             type="color"
             value={newTagColor}
             onChange={(e) => setNewTagColor(e.target.value)}
-            className="w-8 h-8 rounded cursor-pointer bg-transparent border-0"
+            className="w-full sm:w-8 h-8 rounded cursor-pointer bg-transparent border-0"
           />
           <input
             value={newTagName}
@@ -628,7 +628,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
             placeholder="新标签名称..."
             className="input-field flex-1 text-sm"
           />
-          <button onClick={handleCreateTag} className="btn-primary text-xs px-3 py-1.5">
+          <button onClick={handleCreateTag} className="btn-primary text-xs px-3 py-1.5 w-full sm:w-auto">
             创建
           </button>
         </div>

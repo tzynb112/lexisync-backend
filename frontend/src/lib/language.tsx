@@ -25,24 +25,23 @@ export function useT() {
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('zh')
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
+  const [language, setLanguageState] = useState<Language>(() => {
+    if (typeof window === 'undefined') return 'zh'
     const stored = localStorage.getItem('lexisync_lang') as Language | null
-    if (stored === 'zh' || stored === 'en') {
-      setLanguageState(stored)
-    } else {
-      const browserLang = navigator.language.toLowerCase()
-      setLanguageState(browserLang.startsWith('zh') ? 'zh' : 'en')
-    }
-    setMounted(true)
-  }, [])
+    if (stored === 'zh' || stored === 'en') return stored
+    const browserLang = navigator.language.toLowerCase()
+    return browserLang.startsWith('zh') ? 'zh' : 'en'
+  })
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang)
     localStorage.setItem('lexisync_lang', lang)
   }, [])
+
+  useEffect(() => {
+    document.documentElement.setAttribute('lang', language)
+    document.documentElement.setAttribute('data-lang', language)
+  }, [language])
 
   const t = useCallback(
     (key: string) => {
@@ -59,10 +58,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     },
     [language],
   )
-
-  if (!mounted) {
-    return <>{children}</>
-  }
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
