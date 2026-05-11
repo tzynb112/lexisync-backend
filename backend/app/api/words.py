@@ -583,16 +583,22 @@ async def import_words_csv(
 
     reader = csv.DictReader(io.StringIO(text))
 
-    created_words = []
+    result_words = []
     for row in reader:
         word_text = row.get("word", "").strip()
         if not word_text:
             continue
 
+        # Check if word exists
         existing = await db.execute(select(Word).where(Word.word == word_text))
-        if existing.scalar_one_or_none():
+        existing_word = existing.scalar_one_or_none()
+        
+        if existing_word:
+            # Word exists, return it for category linking
+            result_words.append(existing_word)
             continue
 
+        # Create new word
         word = Word(
             word=word_text,
             phonetic=row.get("phonetic", "").strip() or None,
@@ -603,12 +609,12 @@ async def import_words_csv(
             language=row.get("language", "en").strip(),
         )
         db.add(word)
-        created_words.append(word)
+        result_words.append(word)
 
     await db.flush()
-    for w in created_words:
+    for w in result_words:
         await db.refresh(w)
-    return [WordResponse.model_validate(w) for w in created_words]
+    return [WordResponse.model_validate(w) for w in result_words]
 
 
 @router.post("/import/json", response_model=list[WordResponse])

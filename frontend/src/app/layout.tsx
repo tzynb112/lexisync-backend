@@ -43,11 +43,19 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              if ('serviceWorker' in navigator) {
+              (function () {
+                if (!('serviceWorker' in navigator)) return;
+                const isCapacitor = !!window.Capacitor || location.protocol === 'capacitor:' || location.protocol === 'ionic:';
                 window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js').catch(() => {})
-                })
-              }
+                  if (isCapacitor) {
+                    navigator.serviceWorker.getRegistrations()
+                      .then((regs) => Promise.all(regs.map((r) => r.unregister())))
+                      .catch(() => {});
+                    return;
+                  }
+                  navigator.serviceWorker.register('/sw.js').catch(() => {});
+                });
+              })();
             `,
           }}
         />

@@ -57,6 +57,26 @@ function isBadNoiseWord(word) {
   return false;
 }
 
+function isBadDefinitionNoise(definition) {
+  const d = String(definition || '').toLowerCase();
+  if (!d) return true;
+  if (d.includes('abbr.')) return true;
+  if (d.includes('缩写') || d.includes('缩略') || d.includes('首字母')) return true;
+  if (d.includes('american association') || d.includes('american academy')) return true;
+  return false;
+}
+
+function shouldFilterByCategory(entry, categoryName) {
+  const w = String(entry.word || '').toLowerCase();
+  const strictCats = new Set([
+    '小学词汇', '中考词汇', '高考词汇', '四级词汇', '六级词汇', '考研词汇', '专四词汇'
+  ]);
+  if (!strictCats.has(categoryName)) return false;
+  if (/^a{3,}/.test(w)) return true;
+  if (isBadDefinitionNoise(entry.definition)) return true;
+  return false;
+}
+
 function qualityScore(word, definition = '') {
   const w = String(word || '').toLowerCase();
   let s = 0;
@@ -87,8 +107,12 @@ function uniqueByWord(rows) {
   return out;
 }
 
-function pickCategoryRows(categoryRows, globalPool, target) {
-  const cleanLocal = uniqueByWord(categoryRows).filter((x) => !isBadNoiseWord(x.word));
+function pickCategoryRows(categoryRows, globalPool, target, categoryName) {
+  const cleanLocal = uniqueByWord(categoryRows).filter((x) => {
+    if (isBadNoiseWord(x.word)) return false;
+    if (shouldFilterByCategory(x, categoryName)) return false;
+    return true;
+  });
   cleanLocal.sort((a, b) => b.score - a.score || a.word.localeCompare(b.word));
   const selected = [];
   const seen = new Set();
@@ -103,6 +127,7 @@ function pickCategoryRows(categoryRows, globalPool, target) {
     for (const w of globalPool) {
       if (selected.length >= target) break;
       if (seen.has(w.word)) continue;
+      if (shouldFilterByCategory(w, categoryName)) continue;
       selected.push(w);
       seen.add(w.word);
     }
@@ -216,7 +241,7 @@ async function main() {
 
   for (const cat of CATEGORY_ORDER) {
     const rows = loadCategoryRows(db, cat);
-    const selected = pickCategoryRows(rows, globalPool, TARGET_COUNTS[cat]);
+    const selected = pickCategoryRows(rows, globalPool, TARGET_COUNTS[cat], cat);
     selectedByCategory.set(cat, selected.map((x) => x.word));
     for (const w of selected) {
       if (!union.has(w.word)) union.set(w.word, w);

@@ -424,7 +424,7 @@ function FlashcardMode({ tagId, categoryId }: { tagId?: string; categoryId?: str
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto pb-24 sm:pb-0">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-xl font-bold text-surface-100 tracking-tight">闪卡模式</h1>
@@ -476,12 +476,12 @@ function FlashcardMode({ tagId, categoryId }: { tagId?: string; categoryId?: str
 
       {/* 手动切换按钮 */}
       {answered && (
-        <div className="flex justify-center mt-4 animate-fade-in-up">
-          <div className="flex justify-center gap-2 flex-wrap">
+        <div className="fixed bottom-0 left-0 right-0 z-30 sm:static sm:mt-4 animate-fade-in-up px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-2 sm:p-0 bg-gradient-to-t from-surface-950/95 via-surface-950/80 to-transparent sm:bg-none">
+          <div className="mx-auto max-w-2xl w-full flex justify-center gap-2 rounded-2xl border border-surface-700/30 bg-surface-900/85 backdrop-blur-md p-2 sm:flex-wrap sm:bg-transparent sm:border-0 sm:backdrop-blur-none sm:p-0">
           <button
             onClick={handlePrev}
             disabled={currentIndex === 0}
-            className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium
                        bg-surface-700/40 text-surface-300 border border-surface-600/30
                        hover:bg-surface-600/40 hover:text-surface-200
                        disabled:opacity-30 disabled:cursor-not-allowed
@@ -492,7 +492,7 @@ function FlashcardMode({ tagId, categoryId }: { tagId?: string; categoryId?: str
           </button>
           <button
             onClick={handleNext}
-            className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium
                        bg-accent-primary/15 text-accent-primary border border-accent-primary/30
                        hover:bg-accent-primary/25 hover:border-accent-primary/50
                        transition-colors duration-200"

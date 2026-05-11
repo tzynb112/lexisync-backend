@@ -64,8 +64,14 @@ export function GroupProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     Promise.all([
-      api.tags.list().catch(() => []),
-      api.words.categories().catch(() => []),
+      api.tags.list().catch((err) => {
+        console.error('[GroupContext] Failed to load tags:', err)
+        return []
+      }),
+      api.words.categories().catch((err) => {
+        console.error('[GroupContext] Failed to load categories:', err)
+        return []
+      }),
     ])
       .then(([tagsData, categoriesData]: [any, any]) => {
         const tags = Array.isArray(tagsData) ? tagsData : (tagsData?.tags || [])

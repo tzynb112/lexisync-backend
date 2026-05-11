@@ -820,9 +820,12 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
               </button>
             </div>
           )}
-          {words.map((word) => (
-            <div
+          {words.map((word, idx) => (
+            <motion.div
               key={word.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.18, delay: Math.min(idx * 0.02, 0.16) }}
               className={`card-data rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3
                          hover:border-surface-500/40 transition-colors relative
                          ${selectedIds.has(word.id) ? 'border-accent-secondary/30 bg-accent-secondary/5' : ''}`}
@@ -854,7 +857,7 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
                 </div>
                 <p className="text-xs sm:text-sm text-surface-300 line-clamp-2">{word.definition}</p>
               </Link>
-              <div className="flex items-center justify-end gap-0.5 sm:gap-1.5 shrink-0 w-full sm:w-auto flex-nowrap">
+              <div className="flex items-center justify-end gap-1 sm:gap-1.5 shrink-0 w-full sm:w-auto flex-wrap sm:flex-nowrap">
                 <button
                   onClick={() => handleDeleteWord(word.id)}
                   className="p-1.5 rounded-lg text-surface-500 hover:text-accent-error hover:bg-accent-error/5 transition-colors"
@@ -907,12 +910,12 @@ function WordManager({ initialTagId }: { initialTagId?: string }) {
                 </div>
                 <button
                   onClick={() => handleStartLearning(word.id)}
-                  className="btn-primary text-xs px-2.5 sm:px-3 py-1.5 font-mono whitespace-nowrap"
+                  className="btn-primary text-xs px-2.5 sm:px-3 py-1.5 font-mono whitespace-nowrap ml-auto sm:ml-0"
                 >
                   + 学习
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
